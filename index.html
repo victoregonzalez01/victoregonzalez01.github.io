@@ -3,7 +3,7 @@
 <head>
 <title>Calcular materiales</title>
 <link rel="icon" href="https://raw.githubusercontent.com/victoregonzalez01/victoregonzalez01.github.io/refs/heads/main/LOGO.ico">
-
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
 </head>
 <body>
   <div class="cabecera">
@@ -11,10 +11,15 @@
   </div>
 <form id="myForm">
   <label for="sku">SKU:</label><br>
-  <input type="number" id="sku" name="sku"><br><br>
+  <input type="text" id="sku" name="sku"><br><br>
   <label for="metross">Metros:</label><br>
-  <input type="number" id="metros" name="metros"><br><br>
-  <button type="button" onclick="mostrarResultados()">Enviar</button>
+  <input type="text" id="metros" name="metros"><br><br>
+
+  <div class="d-grid gap-2">
+  <button class="btn btn-primary" type="button" onclick="mostrarResultados()">Enviar</button>
+
+</div>
+
 </form>
 
 <div id="resultados">
@@ -26,7 +31,7 @@
 const productos = {
   "137437": {
     nombre: "Piso Ruidoso",
-    color: "beige",
+    color: "brown",
     tamaño: "17.5x91 cm",   // GRANDE: 91 > 60
     rendimiento: 1.59,
     imagen: "https://interceramic.com/dw/image/v2/BJCK_PRD/on/demandware.static/-/Sites-storefront-interceramic/default/dwd41a1a3c/images/hi-res/AMB_10888_1024X768.jpg?sfrm=jpg"

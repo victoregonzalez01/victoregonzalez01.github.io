@@ -22,76 +22,57 @@
 <script>
 // Base de datos de productos
 const productos = {
-  "168146": {
-    nombre: "Piso Clásico",
+  "137437": {
+    nombre: "Piso Ruidoso",
     color: "beige",
-    tamaño: "60x60 cm",   // MEDIANO: 1 saco = 2 m²
-    rendimiento: 1.44,
-    imagen: "https://ejemplo.com/piso1.jpg"
+    tamaño: "17.5x91 cm",   // GRANDE: 91 > 60
+    rendimiento: 1.59,
+    imagen: "https://interceramic.com/dw/image/v2/BJCK_PRD/on/demandware.static/-/Sites-storefront-interceramic/default/dwd41a1a3c/images/hi-res/AMB_10888_1024X768.jpg?sfrm=jpg"
   },
   "137440": {
     nombre: "PISO ST VINCENT",
     color: "white",
-    tamaño: "45x90 cm",   // GRANDE: 90 > 60 → 1 saco = 1.5 m²
+    tamaño: "45x90 cm",   // GRANDE: 90 > 60
     rendimiento: 1.21,
     imagen: "https://cdn.homedepot.com.mx/productos/137440/137440-a3.jpg"
   },
-  "115675": {
-    nombre: "Piso Moderno",
-    color: "gray",
-    tamaño: "45x60 cm",   // CHICO: 45 < 60 → 1 saco = 3 m²
-    rendimiento: 1.44,
-    imagen: "https://ejemplo.com/piso2.jpg"
+  "168146":{
+    nombre:"PISO SOUL AMANPURI",
+    color:"white",
+    tamaño:"60x60 cm",
+    rendimiento:1.44,
+    imagen:"Sin imagen"
   },
-  "144125": {
-    nombre: "Piso Lujo",
-    color: "black",
-    tamaño: "60x76 cm",   // GRANDE: 76 > 60 → 1 saco = 1.5 m²
-    rendimiento: 1.75,
-    imagen: "https://ejemplo.com/piso3.jpg"
-  },
-  "150290": {
-    nombre: "Piso Básico",
-    color: "brown",
-    tamaño: "50x50 cm",   // CHICO: ambos < 60 → 1 saco = 3 m²
-    rendimiento: 1,
-    imagen: "https://ejemplo.com/piso4.jpg"
-  },
-  "225771": {
-    nombre: "Piso Premium",
-    color: "ivory",
-    tamaño: "60x60 cm",   // MEDIANO: 1 saco = 2 m²
-    rendimiento: 1.44,
-    imagen: "https://ejemplo.com/piso5.jpg"
+  "SKU":{
+    nombre:"",
+    color:"",
+    tamaño:"",
+    rendimiento:,
+    imagen:"",
   }
 };
 
 function calcularSacosCemento(tamanoStr, metros) {
-  // Extraer dimensiones del string
-  const dimensiones = tamanoStr.match(/\d+/g);
+  // SOLUCIÓN: Capturar números con decimales
+  const dimensiones = tamanoStr.match(/\d+(\.\d+)?/g);
   if (!dimensiones || dimensiones.length < 2) return 0;
 
-  const ancho = parseInt(dimensiones[0]);
-  const alto = parseInt(dimensiones[1]);
+  // SOLUCIÓN: Usar parseFloat() en lugar de parseInt()
+  const ancho = parseFloat(dimensiones[0]);
+  const alto = parseFloat(dimensiones[1]);
 
   // Determinar rendimiento del cemento según medidas
   let rendimientoCemento;
 
-  // Caso 1: Formato chico (algún lado < 60cm)
+  // SOLUCIÓN: Mantener la lógica original pero con números decimales
   if (ancho > 60 || alto > 60) {
     rendimientoCemento = 1.5;
   }
-  // Caso 2: Formato mediano (exactamente 60x60)
   else if (ancho === 60 && alto === 60) {
     rendimientoCemento = 2;
   }
-  // Caso 3: Formato grande (algún lado > 60cm)
-  else if (ancho < 60 || alto < 60) {
-    rendimientoCemento = 3;
-  }
-  // Caso por defecto (no debería ocurrir)
   else {
-    rendimientoCemento = 2; // Valor conservador
+    rendimientoCemento = 3;
   }
 
   // Calcular sacos necesarios (redondeando hacia arriba)
@@ -125,18 +106,18 @@ function mostrarResultados() {
   const cajasNecesarias = Math.ceil(metros / producto.rendimiento);
   const sacosCemento = calcularSacosCemento(producto.tamaño, metros);
 
-  // Determinar tipo de cemento según medidas
-  const dimensiones = producto.tamaño.match(/\d+/g);
-  const ancho = dimensiones ? parseInt(dimensiones[0]) : 0;
-  const alto = dimensiones ? parseInt(dimensiones[1]) : 0;
+  // SOLUCIÓN: Usar la misma lógica de extracción que en calcularSacosCemento
+  const dimensiones = producto.tamaño.match(/\d+(\.\d+)?/g);
+  const ancho = dimensiones ? parseFloat(dimensiones[0]) : 0;
+  const alto = dimensiones ? parseFloat(dimensiones[1]) : 0;
 
   let tipoCemento = "";
   if (ancho > 60 || alto > 60) {
     tipoCemento = "Formato grande: 1 saco rinde para 1.5 m²";
   } else if (ancho === 60 && alto === 60) {
-    tipoCemento = "Formato mediano: 1 saco rinde para 2 m²";
+    tipoCemento = "Rapido: 1 saco rinde para 2 m²";
   } else {
-    tipoCemento = "Formato chico: 1 saco rinde para 3 m²";
+    tipoCemento = "Rapido: 1 saco rinde para 3 m²";
   }
 
   // Mostrar resultados detallados

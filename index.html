@@ -1,206 +1,591 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-<title>Calcular materiales</title>
-<link rel="icon" href="https://raw.githubusercontent.com/victoregonzalez01/victoregonzalez01.github.io/refs/heads/main/LOGO.ico">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Materiales | Interceramic</title>
+    <link rel="icon" href="https://raw.githubusercontent.com/victoregonzalez01/victoregonzalez01.github.io/refs/heads/main/LOGO.ico">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --accent: #3498db;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+            --success: #27ae60;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a3a 0%, #2c3e50 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+            max-height: 80px;
+        }
+        
+        .title-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .title-container h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .title-container p {
+            color: #666;
+            font-size: 1rem;
+            margin: 10px 0 0;
+        }
+        
+        .card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            border: none;
+            background: rgba(255, 255, 255, 0.95);
+        }
+        
+        .card-header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+        
+        .form-container {
+            padding: 25px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .btn-calculate {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.4);
+        }
+        
+        .btn-calculate:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.5);
+        }
+        
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+        
+        .result-container {
+            padding: 25px;
+            display: none;
+        }
+        
+        .product-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px dashed #eee;
+        }
+        
+        .product-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+        }
+        
+        .color-box {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
+        
+        .product-info {
+            margin-bottom: 25px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+        
+        .info-item strong {
+            display: block;
+            color: var(--primary);
+            margin-bottom: 5px;
+            font-size: 0.95rem;
+        }
+        
+        .info-item span {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .calculations {
+            background: #e8f5e9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .calculation-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .calculation-item:last-child {
+            border-bottom: none;
+        }
+        
+        .product-image {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .mobile-warning {
+            display: none;
+            background: #f39c12;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+        
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 30px 0 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .title-container h1 {
+                font-size: 1.5rem;
+            }
+            
+            .card-header {
+                font-size: 1.2rem;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+            
+            .product-name {
+                font-size: 1.3rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .mobile-warning {
+                display: block;
+            }
+            
+            .btn-calculate {
+                padding: 15px;
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            body {
+                padding: 15px;
+            }
+            
+            .title-container h1 {
+                font-size: 1.3rem;
+            }
+            
+            .title-container p {
+                font-size: 0.9rem;
+            }
+            
+            .card-header {
+                font-size: 1.1rem;
+                padding: 12px 15px;
+            }
+            
+            .form-container {
+                padding: 15px;
+            }
+            
+            .calculation-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 5px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="cabecera" style="text-align:center;">
-    <img src="https://interceramic.com/on/demandware.static/Sites-interceramic-Site/-/default/dw3478a94e/images/logo.png" alt="logo interceramic">
-  </div>
-<form id="myForm">
-  <label for="sku">SKU:</label><br>
-  <input type="text" id="sku" name="sku"><br><br>
-  <label for="metross">Metros:</label><br>
-  <input type="text" id="metros" name="metros"><br><br>
-
-  <div class="d-grid gap-2 d-md-block">
-  <button class="btn btn-primary" type="button" onclick="mostrarResultados()">Enviar</button>
-
-</div>
-
-</form>
-
-<div id="resultados">
-  <!-- Aquí se mostrarán los resultados -->
-</div>
-
-<script>
-// Base de datos de productos
-const productos = {
-  "137437": {
-    nombre: "Piso Ruidoso",
-    color: "brown",
-    tamaño: "17.5x91 cm",   // GRANDE: 91 > 60
-    rendimiento: 1.59,
-    imagen: "https://interceramic.com/dw/image/v2/BJCK_PRD/on/demandware.static/-/Sites-storefront-interceramic/default/dwd41a1a3c/images/hi-res/AMB_10888_1024X768.jpg?sfrm=jpg"
-  },
-  "137440": {
-    nombre: "PISO ST VINCENT",
-    color: "white",
-    tamaño: "45x90 cm",   // GRANDE: 90 > 60
-    rendimiento: 1.21,
-    imagen: "https://cdn.homedepot.com.mx/productos/137440/137440-a3.jpg"
-  },
-  "168146":{
-    nombre:"PISO SOUL AMANPURI",
-    color:"white",
-    tamaño:"60x60 cm",
-    rendimiento:1.44,
-    imagen:"Sin imagen"
-  }
-};
-
-function calcularSacosCemento(tamanoStr, metros) {
-  // SOLUCIÓN: Capturar números con decimales
-  const dimensiones = tamanoStr.match(/\d+(\.\d+)?/g);
-  if (!dimensiones || dimensiones.length < 2) return 0;
-
-  // SOLUCIÓN: Usar parseFloat() en lugar de parseInt()
-  const ancho = parseFloat(dimensiones[0]);
-  const alto = parseFloat(dimensiones[1]);
-
-  // Determinar rendimiento del cemento según medidas
-  let rendimientoCemento;
-
-  // SOLUCIÓN: Mantener la lógica original pero con números decimales
-  if (ancho > 60 || alto > 60) {
-    rendimientoCemento = 1.5;
-  }
-  else if (ancho === 60 && alto === 60) {
-    rendimientoCemento = 2;
-  }
-  else {
-    rendimientoCemento = 3;
-  }
-
-  // Calcular sacos necesarios (redondeando hacia arriba)
-  return Math.ceil(metros / rendimientoCemento);
-}
-
-function mostrarResultados() {
-  const formulario = document.getElementById("myForm");
-  const formData = new FormData(formulario);
-
-  const sku = formData.get("sku");
-  const metros = parseFloat(formData.get("metros"));
-
-  // Validación
-  if (!sku || isNaN(metros) || metros <= 0) {
-    document.getElementById("resultados").innerHTML =
-      `<div class="error">Error: Ingresa un SKU válido y metros mayores a cero</div>`;
-    return;
-  }
-
-  // Buscar producto
-  const producto = productos[sku];
-
-  if (!producto) {
-    document.getElementById("resultados").innerHTML =
-      `<div class="error">Error: SKU ${sku} no encontrado en la base de datos</div>`;
-    return;
-  }
-
-  // Cálculos
-  const cajasNecesarias = Math.ceil(metros / producto.rendimiento);
-  const sacosCemento = calcularSacosCemento(producto.tamaño, metros);
-
-  // SOLUCIÓN: Usar la misma lógica de extracción que en calcularSacosCemento
-  const dimensiones = producto.tamaño.match(/\d+(\.\d+)?/g);
-  const ancho = dimensiones ? parseFloat(dimensiones[0]) : 0;
-  const alto = dimensiones ? parseFloat(dimensiones[1]) : 0;
-
-  let tipoCemento = "";
-  if (ancho > 60 || alto > 60) {
-    tipoCemento = "Formato grande: 1 saco rinde para 1.5 m²";
-  } else if (ancho === 60 && alto === 60) {
-    tipoCemento = "Rapido: 1 saco rinde para 2 m²";
-  } else {
-    tipoCemento = "Rapido: 1 saco rinde para 3 m²";
-  }
-
-  // Mostrar resultados detallados
-  document.getElementById("resultados").innerHTML = `
-    <div class="producto-header">
-      <h3>${producto.nombre}</h3>
-      <div class="color-box" style="background-color:${producto.color}"></div>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="https://interceramic.com/on/demandware.static/Sites-interceramic-Site/-/default/dw3478a94e/images/logo.png" alt="Interceramic Logo">
+            </div>
+            <div class="title-container">
+                <h1>CALCULADORA DE MATERIALES</h1>
+                <p>Determina la cantidad exacta de materiales que necesitas para tu proyecto</p>
+            </div>
+        </header>
+        
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-calculator me-2"></i>DATOS DEL PROYECTO
+                    </div>
+                    <div class="form-container">
+                        <form id="materialForm">
+                            <div class="mb-4">
+                                <label for="sku" class="form-label">SKU del producto</label>
+                                <input type="text" class="form-control" id="sku" placeholder="Ingresa el SKU del material">
+                                <div class="form-text">Ejemplo: 137437, 137440, 168146</div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="metros" class="form-label">Metros cuadrados</label>
+                                <input type="number" class="form-control" id="metros" placeholder="Ingresa los metros cuadrados">
+                                <div class="form-text">Área total a cubrir</div>
+                            </div>
+                            
+                            <button type="button" class="btn btn-calculate" onclick="mostrarResultados()">
+                                <i class="fas fa-calculator me-2"></i>CALCULAR MATERIALES
+                            </button>
+                            
+                            <div class="mobile-warning">
+                                <i class="fas fa-mobile-alt me-2"></i>Diseño optimizado para móviles
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="features">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-ruler-combined"></i>
+                        </div>
+                        <h3 class="feature-title">Cálculos Precisos</h3>
+                        <p>Determina la cantidad exacta de materiales que necesitas para tu proyecto</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-save"></i>
+                        </div>
+                        <h3 class="feature-title">Evita Excesos</h3>
+                        <p>Reduce desperdicios y ahorra dinero en materiales no utilizados</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-clipboard-list me-2"></i>RESULTADOS DEL CÁLCULO
+                    </div>
+                    <div class="result-container" id="resultados">
+                        <!-- Aquí se mostrarán los resultados -->
+                    </div>
+                    
+                    <div class="error-message" id="errorMessage">
+                        <!-- Mensajes de error -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 Interceramic - Calculadora de Materiales</p>
+            <p class="mt-2">Herramienta desarrollada para profesionales de la construcción</p>
+        </footer>
     </div>
 
-    <div class="producto-info">
-      <p><strong>SKU:</strong> ${sku}</p>
-      <p><strong>Tamaño:</strong> ${producto.tamaño}</p>
-      <p><strong>Color:</strong> ${producto.color}</p>
-      <p><strong>Rendimiento por caja:</strong> ${producto.rendimiento} m²</p>
-    </div>
+    <script>
+        // Base de datos de productos
+        const productos = {
+            "137437": {
+                nombre: "Piso Ruidoso",
+                color: "#8B4513",
+                tamaño: "17.5x91 cm",
+                rendimiento: 1.59,
+                imagen: "https://interceramic.com/dw/image/v2/BJCK_PRD/on/demandware.static/-/Sites-storefront-interceramic/default/dwd41a1a3c/images/hi-res/AMB_10888_1024X768.jpg?sfrm=jpg"
+            },
+            "137440": {
+                nombre: "PISO ST VINCENT",
+                color: "#F5F5F5",
+                tamaño: "45x90 cm",
+                rendimiento: 1.21,
+                imagen: "https://cdn.homedepot.com.mx/productos/137440/137440-a3.jpg"
+            },
+            "168146": {
+                nombre: "PISO SOUL AMANPURI",
+                color: "#F0F8FF",
+                tamaño: "60x60 cm",
+                rendimiento: 1.44,
+                imagen: "https://interceramic.com/dw/image/v2/BJCK_PRD/on/demandware.static/-/Sites-interceramic-master-catalog/default/dw1bca1d2d/images/Ambientes/AMBIENTES-SOUL-AMANPURI-GRAPHITE.jpg?sw=800"
+            }
+        };
 
-    <div class="calculos">
-      <p><strong>Metros requeridos:</strong> ${metros} m²</p>
-      <p><strong>Cajas necesarias:</strong> ${cajasNecesarias}</p>
-      <p><strong>Tipo de cemento:</strong> ${tipoCemento}</p>
-      <p><strong>Sacos de cemento necesarios:</strong> ${sacosCemento}</p>
-    </div>
+        function calcularSacosCemento(tamanoStr, metros) {
+            const dimensiones = tamanoStr.match(/\d+(\.\d+)?/g);
+            if (!dimensiones || dimensiones.length < 2) return 0;
 
-    ${producto.imagen ? `<img src="${producto.imagen}" alt="${producto.nombre}" class="producto-img">` : ''}
-  `;
-}
-</script>
-<style>
-.resultados-container {
-  border: 1px solid #ddd;
-  padding: 20px;
-  border-radius: 8px;
-  margin-top: 20px;
-  background-color: #f9f9f9;
-}
+            const ancho = parseFloat(dimensiones[0]);
+            const alto = parseFloat(dimensiones[1]);
 
-.error {
-  color: #d32f2f;
-  background-color: #ffebee;
-  padding: 15px;
-  border-radius: 4px;
-  border-left: 4px solid #d32f2f;
-}
+            let rendimientoCemento;
 
-.producto-header {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-bottom: 15px;
-}
+            if (ancho > 60 || alto > 60) {
+                rendimientoCemento = 1.5;
+            }
+            else if (ancho === 60 && alto === 60) {
+                rendimientoCemento = 2;
+            }
+            else {
+                rendimientoCemento = 3;
+            }
 
-.color-box {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
+            return Math.ceil(metros / rendimientoCemento);
+        }
 
-.producto-info {
-  background-color: #fff;
-  padding: 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
+        function mostrarResultados() {
+            const sku = document.getElementById("sku").value.trim();
+            const metrosInput = document.getElementById("metros").value.trim();
+            const metros = parseFloat(metrosInput);
+            const resultadosDiv = document.getElementById("resultados");
+            const errorDiv = document.getElementById("errorMessage");
 
-.calculos {
-  background-color: #e8f5e9;
-  padding: 15px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-}
+            // Resetear mensajes
+            resultadosDiv.style.display = "none";
+            errorDiv.style.display = "none";
+            errorDiv.innerHTML = "";
 
-.calculos p {
-  margin: 8px 0;
-  font-size: 1.1em;
-}
+            // Validación
+            if (!sku) {
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Error: Debes ingresar un SKU válido';
+                errorDiv.style.display = "block";
+                return;
+            }
 
-.producto-img {
-  max-width: 200px;
-  border-radius: 4px;
-  margin-top: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-</style>
+            if (!metrosInput || isNaN(metros) || metros <= 0) {
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Error: Ingresa metros cuadrados válidos (mayores a cero)';
+                errorDiv.style.display = "block";
+                return;
+            }
+
+            // Buscar producto
+            const producto = productos[sku];
+
+            if (!producto) {
+                errorDiv.innerHTML = `<i class="fas fa-exclamation-circle me-2"></i>Error: SKU ${sku} no encontrado en nuestra base de datos`;
+                errorDiv.style.display = "block";
+                return;
+            }
+
+            // Cálculos
+            const cajasNecesarias = Math.ceil(metros / producto.rendimiento);
+            const sacosCemento = calcularSacosCemento(producto.tamaño, metros);
+
+            const dimensiones = producto.tamaño.match(/\d+(\.\d+)?/g);
+            const ancho = dimensiones ? parseFloat(dimensiones[0]) : 0;
+            const alto = dimensiones ? parseFloat(dimensiones[1]) : 0;
+
+            let tipoCemento = "";
+            if (ancho > 60 || alto > 60) {
+                tipoCemento = "Formato grande: 1 saco rinde para 1.5 m²";
+            } else if (ancho === 60 && alto === 60) {
+                tipoCemento = "Rapido: 1 saco rinde para 2 m²";
+            } else {
+                tipoCemento = "Rapido: 1 saco rinde para 3 m²";
+            }
+
+            // Mostrar resultados detallados
+            resultadosDiv.innerHTML = `
+                <div class="product-header">
+                    <h3 class="product-name">${producto.nombre}</h3>
+                    <div class="color-box" style="background-color:${producto.color}"></div>
+                </div>
+
+                <div class="product-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <strong>SKU</strong>
+                            <span>${sku}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Tamaño</strong>
+                            <span>${producto.tamaño}</span>
+                        </div>
+                        <div class="info-item">
+                            <strong>Rendimiento</strong>
+                            <span>${producto.rendimiento} m²/caja</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="calculations">
+                    <div class="calculation-item">
+                        <span>Metros requeridos:</span>
+                        <span><strong>${metros} m²</strong></span>
+                    </div>
+                    <div class="calculation-item">
+                        <span>Cajas necesarias:</span>
+                        <span><strong>${cajasNecesarias}</strong></span>
+                    </div>
+                    <div class="calculation-item">
+                        <span>Tipo de cemento:</span>
+                        <span>${tipoCemento}</span>
+                    </div>
+                    <div class="calculation-item">
+                        <span>Sacos de cemento:</span>
+                        <span><strong>${sacosCemento}</strong></span>
+                    </div>
+                </div>
+
+                ${producto.imagen ? `<img src="${producto.imagen}" alt="${producto.nombre}" class="product-image">` : ''}
+            `;
+            
+            resultadosDiv.style.display = "block";
+        }
+    </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 <title>Calcular materiales</title>
 </head>
-<body style="background-color:gray;">
+<body style="background-color:red;">
   <div class="cabecera">
     <img src="https://interceramic.com/on/demandware.static/Sites-interceramic-Site/-/default/dw3478a94e/images/logo.png" alt="logo interceramic">
   </div>
@@ -20,26 +20,83 @@
 </div>
 
 <script>
-
-
-  // Base de datos de productos (SKU y su rendimiento por caja)
+// Base de datos de productos
 const productos = {
-  //"SKU": RENDIMIENTO,
-  "168146": 1.44,
-  // Puedes agregar más SKUs aquí según sea necesario
-  // Ejemplo: "123456": 2.50,
-  "137440": {
-    nombre:"PISO ST VINCENT",
-    color: "white",
-    tamaño: "45x90 cm",
-    rendimiento:1.21,
-  imagen: "https://cdn.homedepot.com.mx/productos/137440/137440-a3.jpg",
+  "168146": {
+    nombre: "Piso Clásico",
+    color: "beige",
+    tamaño: "60x60 cm",   // MEDIANO: 1 saco = 2 m²
+    rendimiento: 1.44,
+    imagen: "https://ejemplo.com/piso1.jpg"
   },
-  "115675":1.44,
-  "144125":1.75,
-  "150290":1,
-  "225771":1.44,
+  "137440": {
+    nombre: "PISO ST VINCENT",
+    color: "white",
+    tamaño: "45x90 cm",   // GRANDE: 90 > 60 → 1 saco = 1.5 m²
+    rendimiento: 1.21,
+    imagen: "https://cdn.homedepot.com.mx/productos/137440/137440-a3.jpg"
+  },
+  "115675": {
+    nombre: "Piso Moderno",
+    color: "gray",
+    tamaño: "45x60 cm",   // CHICO: 45 < 60 → 1 saco = 3 m²
+    rendimiento: 1.44,
+    imagen: "https://ejemplo.com/piso2.jpg"
+  },
+  "144125": {
+    nombre: "Piso Lujo",
+    color: "black",
+    tamaño: "60x76 cm",   // GRANDE: 76 > 60 → 1 saco = 1.5 m²
+    rendimiento: 1.75,
+    imagen: "https://ejemplo.com/piso3.jpg"
+  },
+  "150290": {
+    nombre: "Piso Básico",
+    color: "brown",
+    tamaño: "50x50 cm",   // CHICO: ambos < 60 → 1 saco = 3 m²
+    rendimiento: 1,
+    imagen: "https://ejemplo.com/piso4.jpg"
+  },
+  "225771": {
+    nombre: "Piso Premium",
+    color: "ivory",
+    tamaño: "60x60 cm",   // MEDIANO: 1 saco = 2 m²
+    rendimiento: 1.44,
+    imagen: "https://ejemplo.com/piso5.jpg"
+  }
 };
+
+function calcularSacosCemento(tamanoStr, metros) {
+  // Extraer dimensiones del string
+  const dimensiones = tamanoStr.match(/\d+/g);
+  if (!dimensiones || dimensiones.length < 2) return 0;
+
+  const ancho = parseInt(dimensiones[0]);
+  const alto = parseInt(dimensiones[1]);
+
+  // Determinar rendimiento del cemento según medidas
+  let rendimientoCemento;
+
+  // Caso 1: Formato chico (algún lado < 60cm)
+  if (ancho > 60 || alto > 60) {
+    rendimientoCemento = 1.5;
+  }
+  // Caso 2: Formato mediano (exactamente 60x60)
+  else if (ancho === 60 && alto === 60) {
+    rendimientoCemento = 2;
+  }
+  // Caso 3: Formato grande (algún lado > 60cm)
+  else if (ancho < 60 || alto < 60) {
+    rendimientoCemento = 3;
+  }
+  // Caso por defecto (no debería ocurrir)
+  else {
+    rendimientoCemento = 2; // Valor conservador
+  }
+
+  // Calcular sacos necesarios (redondeando hacia arriba)
+  return Math.ceil(metros / rendimientoCemento);
+}
 
 function mostrarResultados() {
   const formulario = document.getElementById("myForm");
@@ -66,7 +123,21 @@ function mostrarResultados() {
 
   // Cálculos
   const cajasNecesarias = Math.ceil(metros / producto.rendimiento);
+  const sacosCemento = calcularSacosCemento(producto.tamaño, metros);
 
+  // Determinar tipo de cemento según medidas
+  const dimensiones = producto.tamaño.match(/\d+/g);
+  const ancho = dimensiones ? parseInt(dimensiones[0]) : 0;
+  const alto = dimensiones ? parseInt(dimensiones[1]) : 0;
+
+  let tipoCemento = "";
+  if (ancho > 60 || alto > 60) {
+    tipoCemento = "Formato grande: 1 saco rinde para 1.5 m²";
+  } else if (ancho === 60 && alto === 60) {
+    tipoCemento = "Formato mediano: 1 saco rinde para 2 m²";
+  } else {
+    tipoCemento = "Formato chico: 1 saco rinde para 3 m²";
+  }
 
   // Mostrar resultados detallados
   document.getElementById("resultados").innerHTML = `
@@ -80,20 +151,19 @@ function mostrarResultados() {
       <p><strong>Tamaño:</strong> ${producto.tamaño}</p>
       <p><strong>Color:</strong> ${producto.color}</p>
       <p><strong>Rendimiento por caja:</strong> ${producto.rendimiento} m²</p>
-
     </div>
 
     <div class="calculos">
       <p><strong>Metros requeridos:</strong> ${metros} m²</p>
       <p><strong>Cajas necesarias:</strong> ${cajasNecesarias}</p>
-
+      <p><strong>Tipo de cemento:</strong> ${tipoCemento}</p>
+      <p><strong>Sacos de cemento necesarios:</strong> ${sacosCemento}</p>
     </div>
 
     ${producto.imagen ? `<img src="${producto.imagen}" alt="${producto.nombre}" class="producto-img">` : ''}
   `;
 }
 </script>
-
 <style>
 .resultados-container {
   border: 1px solid #ddd;
